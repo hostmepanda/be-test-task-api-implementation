@@ -50,6 +50,7 @@ describe('Contracts router handler methods', () => {
             params: { id: existingContractId },
             profile: clientExistingProfile,
           };
+          // TODO: replace with real db interaction, e.g. in memory?
           mockedJson.mockResolvedValue(existingContract);
           spyOnContractFindOne.mockResolvedValue(existingContract);
           getByIdResult = await contractsHandler.getById(req, res, next);
