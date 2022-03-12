@@ -8,6 +8,7 @@ const router = express.Router();
 router.use(getProfile);
 
 router.get('/contracts/:id', contracts.getById);
+router.get('/contracts', contracts.list);
 
 module.exports = {
   router,

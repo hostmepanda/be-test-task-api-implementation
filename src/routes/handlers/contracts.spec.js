@@ -4,6 +4,7 @@ const mockedStatus = jest.fn();
 const mockedJson = jest.fn();
 const next = jest.fn();
 const spyOnContractFindOne = jest.spyOn(contractsHandler.models.Contract, 'findOne');
+const spyOnContractFindAll = jest.spyOn(contractsHandler.models.Contract, 'findAll');
 
 const res = {
   status: mockedStatus,
@@ -11,31 +12,33 @@ const res = {
 };
 
 describe('Contracts router handler methods', () => {
-  describe('getById', () => {
-    const existingContractId = 1;
-    const notExistingContractId = 2;
-    const clientIdBelongsToContract = 100;
-    const otherClient = 200;
+  const mockedEnd = jest.fn();
+  const existingContractId = 1;
+  const clientIdBelongsToContract = 100;
+  const clientExistingProfile = {
+    id: clientIdBelongsToContract,
+    firstName: 'Harry',
+    lastName: 'Potter',
+    profession: 'Wizard',
+    balance: 1150,
+    type: 'client',
+  };
+  const existingContract = {
+    id: existingContractId,
+    terms: 'some terms',
+    status: 'in_progress',
+    createdAt: '2022-03-09T20:14:40.409Z',
+    updatedAt: '2022-03-09T20:14:40.409Z',
+    ContractorId: 7,
+    ClientId: clientIdBelongsToContract,
+  };
+  const raisedError = new Error('Error happened while executing findOne method');
+  let req;
 
-    const clientExistingProfile = {
-      id: clientIdBelongsToContract,
-      firstName: 'Harry',
-      lastName: 'Potter',
-      profession: 'Wizard',
-      balance: 1150,
-      type: 'client',
-    };
-    const existingContract = {
-      id: existingContractId,
-      terms: 'some terms',
-      status: 'in_progress',
-      createdAt: '2022-03-09T20:14:40.409Z',
-      updatedAt: '2022-03-09T20:14:40.409Z',
-      ContractorId: 7,
-      ClientId: clientIdBelongsToContract,
-    };
+  describe('getById', () => {
+    const notExistingContractId = 2;
+    const otherClient = 200;
     let getByIdResult;
-    let req;
 
     describe('when contract with given id exists', () => {
       afterEach(() => {
@@ -88,7 +91,6 @@ describe('Contracts router handler methods', () => {
       });
     });
     describe('when contract with given id does not exists', () => {
-      const mockedEnd = jest.fn();
       beforeAll(async () => {
         req = {
           params: { id: notExistingContractId },
@@ -115,7 +117,6 @@ describe('Contracts router handler methods', () => {
       });
     });
     describe('when findOne throws an error', () => {
-      const raisedError = new Error('Error happened while executing findOne method');
       beforeAll(async () => {
         req = {
           params: { id: notExistingContractId },
@@ -133,6 +134,97 @@ describe('Contracts router handler methods', () => {
       });
       it('Should call next with error', () => {
         expect(next).toBeCalled();
+        expect(next).toBeCalledWith(raisedError);
+      });
+    });
+  });
+  describe('list', () => {
+    let listResult;
+
+    describe('having 2 contracts belong to the profile calling', () => {
+      const listOfTwoContracts = [
+        {
+          ...existingContract,
+          id: 300,
+          ClientId: clientIdBelongsToContract,
+        },
+        {
+          ...existingContract,
+          id: 301,
+          ContractorId: clientIdBelongsToContract,
+        },
+      ];
+      beforeAll(async () => {
+        req = {
+          profile: clientExistingProfile,
+        };
+        spyOnContractFindAll.mockResolvedValue(listOfTwoContracts);
+        mockedStatus.mockImplementation(() => ({ end: mockedEnd }));
+        mockedJson.mockResolvedValue(listOfTwoContracts);
+        listResult = await contractsHandler.list(req, res, next);
+      });
+      afterAll(() => {
+        jest.clearAllMocks();
+      });
+
+      it('Should not call json method', () => {
+        expect(mockedJson).toBeCalledTimes(1);
+      });
+      it('Should not call next', () => {
+        expect(next).not.toBeCalled();
+      });
+      it('Should not call end', () => {
+        expect(mockedStatus).not.toBeCalled();
+        expect(mockedEnd).not.toBeCalled();
+      });
+      it('Should reply with list of 2 contracts', () => {
+        expect(listResult).toMatchObject(listOfTwoContracts);
+      });
+    });
+    describe('having no contracts belong to the profile calling', () => {
+      const listOfTwoContracts = [];
+      beforeAll(async () => {
+        req = {
+          profile: clientExistingProfile,
+        };
+        spyOnContractFindAll.mockResolvedValue(listOfTwoContracts);
+        mockedStatus.mockImplementation(() => ({ end: mockedEnd }));
+        mockedJson.mockResolvedValue(listOfTwoContracts);
+        listResult = await contractsHandler.list(req, res, next);
+      });
+      afterAll(() => {
+        jest.clearAllMocks();
+      });
+
+      it('Should not call json method', () => {
+        expect(mockedJson).not.toBeCalled();
+      });
+      it('Should not call next', () => {
+        expect(next).not.toBeCalled();
+      });
+      it('Should reply with 404 status', () => {
+        expect(listResult).toBeUndefined();
+        expect(mockedStatus).toBeCalledWith(404);
+        expect(mockedEnd).toBeCalledTimes(1);
+      });
+    });
+    describe('when findAll throws and error', () => {
+      beforeAll(async () => {
+        req = {
+          profile: clientExistingProfile,
+        };
+        spyOnContractFindAll.mockRejectedValue(raisedError);
+        listResult = await contractsHandler.list(req, res, next);
+      });
+      afterAll(() => {
+        jest.clearAllMocks();
+      });
+
+      it('Should not call json method', () => {
+        expect(mockedJson).not.toBeCalled();
+      });
+      it('Should not call next', () => {
+        expect(next).toBeCalledTimes(1);
         expect(next).toBeCalledWith(raisedError);
       });
     });
