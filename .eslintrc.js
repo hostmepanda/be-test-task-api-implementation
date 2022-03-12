@@ -26,4 +26,12 @@ module.exports = {
     semi: ['error', 'always'],
     quotes: ['error', 'single'],
   },
+  overrides: [
+    {
+      files: ['*.spec.js'],
+      rules: {
+        'no-undef': ['off'],
+      },
+    },
+  ],
 };

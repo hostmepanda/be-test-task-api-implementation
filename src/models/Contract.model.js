@@ -20,6 +20,6 @@ Contract.init(
   },
 );
 
-module.export = {
+module.exports = {
   Contract,
 };
