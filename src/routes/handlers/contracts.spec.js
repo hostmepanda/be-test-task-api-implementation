@@ -3,7 +3,7 @@ const contractsHandler = require('./contracts.handler');
 const mockedStatus = jest.fn();
 const mockedJson = jest.fn();
 const next = jest.fn();
-const spyOnContractFindOne = jest.spyOn(contractsHandler.Contract, 'findOne');
+const spyOnContractFindOne = jest.spyOn(contractsHandler.models.Contract, 'findOne');
 
 const res = {
   status: mockedStatus,
@@ -14,8 +14,11 @@ describe('Contracts router handler methods', () => {
   describe('getById', () => {
     const existingContractId = 1;
     const notExistingContractId = 2;
+    const clientIdBelongsToContract = 100;
+    const otherClient = 200;
+
     const clientExistingProfile = {
-      id: 1,
+      id: clientIdBelongsToContract,
       firstName: 'Harry',
       lastName: 'Potter',
       profession: 'Wizard',
@@ -29,34 +32,59 @@ describe('Contracts router handler methods', () => {
       createdAt: '2022-03-09T20:14:40.409Z',
       updatedAt: '2022-03-09T20:14:40.409Z',
       ContractorId: 7,
-      ClientId: 3,
+      ClientId: clientIdBelongsToContract,
     };
     let getByIdResult;
     let req;
 
     describe('when contract with given id exists', () => {
-      beforeAll(async () => {
-        req = {
-          params: { id: existingContractId },
-          profile: clientExistingProfile,
-        };
-        mockedJson.mockResolvedValue(existingContract);
-        spyOnContractFindOne.mockResolvedValue(existingContract);
-        getByIdResult = await contractsHandler.getById(req, res, next);
-      });
-      afterAll(() => {
+      afterEach(() => {
         jest.clearAllMocks();
       });
-
-      it('Should call json method', () => {
-        expect(mockedJson).toBeCalledTimes(1);
-        expect(mockedJson).toBeCalledWith(existingContract);
+      describe('and it belongs to the profile calling', () => {
+        beforeAll(async () => {
+          req = {
+            params: { id: existingContractId },
+            profile: clientExistingProfile,
+          };
+          mockedJson.mockResolvedValue(existingContract);
+          spyOnContractFindOne.mockResolvedValue(existingContract);
+          getByIdResult = await contractsHandler.getById(req, res, next);
+        });
+        it('Should call json method', () => {
+          expect(mockedJson).toBeCalledTimes(1);
+          expect(mockedJson).toBeCalledWith(existingContract);
+        });
+        it('Should not call next', () => {
+          expect(next).not.toBeCalled();
+        });
+        it('Should return contract', () => {
+          expect(getByIdResult).toMatchObject(existingContract);
+        });
       });
-      it('Should not call next', () => {
-        expect(next).not.toBeCalled();
-      });
-      it('Should return contract', () => {
-        expect(getByIdResult).toMatchObject(existingContract);
+      describe('and it does not belong to the profile calling', () => {
+        beforeAll(async () => {
+          req = {
+            params: { id: existingContractId },
+            profile: {
+              ...clientExistingProfile,
+              id: otherClient,
+            },
+          };
+          mockedJson.mockResolvedValue(existingContract);
+          spyOnContractFindOne.mockResolvedValue(null);
+          getByIdResult = await contractsHandler.getById(req, res, next);
+        });
+        it('Should reply with 404 status', () => {
+          expect(mockedStatus).toBeCalledTimes(1);
+          expect(mockedStatus).toBeCalledWith(404);
+        });
+        it('Should not call json method', () => {
+          expect(mockedJson).toBeCalledTimes(0);
+        });
+        it('Should not call next', () => {
+          expect(next).not.toBeCalled();
+        });
       });
     });
     describe('when contract with given id does not exists', () => {
@@ -80,7 +108,7 @@ describe('Contracts router handler methods', () => {
       it('Should not call next', () => {
         expect(next).not.toBeCalled();
       });
-      it('Should respond with 404 status', () => {
+      it('Should reply with 404 status', () => {
         expect(mockedStatus).toBeCalledTimes(1);
         expect(mockedStatus).toBeCalledWith(404);
         expect(mockedEnd).toBeCalledTimes(1);

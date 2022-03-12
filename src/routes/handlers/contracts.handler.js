@@ -1,20 +1,32 @@
-const { Contract } = require('../../models');
+const { Op: { or } } = require('sequelize');
+
+const { sequelize } = require('../../models');
 
 class ContractsHandler {
   constructor() {
-    this.Contract = Contract;
+    this.models = sequelize.models;
     this.getById = this.getById.bind(this);
   }
 
   /**
-   * FIX ME!
-   * @returns contract by id
+   * @returns contract by id for calling profile
    */
   async getById(req, res, next) {
     const { id } = req.params;
+    const { id: profileId } = req.profile;
 
     try {
-      const contract = await this.Contract.findOne({ where: { id } });
+      const query = {
+        where: {
+          id,
+          [or]: [
+            { ClientId: profileId },
+            { ContractorId: profileId },
+          ],
+        },
+      };
+
+      const contract = await this.models.Contract.findOne(query);
 
       if (!contract) {
         return res.status(404).end();
