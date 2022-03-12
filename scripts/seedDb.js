@@ -1,9 +1,12 @@
-const { Contract, Job, Profile } = require('../src/models');
+const {
+  Contract,
+  Job,
+  Profile,
+  sequelize,
+} = require('../src/models');
 
 async function createTables() {
-  await Profile.sync({ force: true });
-  await Contract.sync({ force: true });
-  await Job.sync({ force: true });
+  await sequelize.sync({ force: true });
 }
 
 async function insertDemoData() {
