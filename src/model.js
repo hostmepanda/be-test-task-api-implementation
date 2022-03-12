@@ -27,7 +27,7 @@ Profile.init(
     },
     type: {
       type: Sequelize.ENUM('client', 'contractor'),
-    }
+    },
   },
   {
     sequelize,
@@ -61,24 +61,24 @@ Job.init(
   {
     description: {
       type: Sequelize.TEXT,
-      allowNull: false
+      allowNull: false,
     },
     price: {
       type: Sequelize.DECIMAL(12, 2),
-      allowNull: false
+      allowNull: false,
     },
     paid: {
       type: Sequelize.BOOLEAN,
-      default: false
+      default: false,
     },
     paymentDate: {
-      type: Sequelize.DATE
-    }
+      type: Sequelize.DATE,
+    },
   },
   {
     sequelize,
-    modelName: 'Job'
-  }
+    modelName: 'Job',
+  },
 );
 
 Profile.hasMany(Contract, { as: 'Contractor', foreignKey: 'ContractorId' });
@@ -94,5 +94,5 @@ module.exports = {
   sequelize,
   Profile,
   Contract,
-  Job
+  Job,
 };
