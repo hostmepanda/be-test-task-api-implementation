@@ -6,7 +6,7 @@ const getProfile = async (req, res, next) => {
   );
   
   if (!profile) {
-      return res.status(401).end();
+    return res.status(401).end();
   }
   
   req.profile = profile;
