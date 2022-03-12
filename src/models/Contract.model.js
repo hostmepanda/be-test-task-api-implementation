@@ -1,17 +1,14 @@
 const Sequelize = require('sequelize');
 const { sequelize } = require('./helper');
 
-class Contract extends Sequelize.Model {
-}
+class Contract extends Sequelize.Model {}
 
 Contract.init(
   {
+    status: Sequelize.ENUM('new', 'in_progress', 'terminated'),
     terms: {
-      type: Sequelize.TEXT,
       allowNull: false,
-    },
-    status: {
-      type: Sequelize.ENUM('new', 'in_progress', 'terminated'),
+      type: Sequelize.TEXT,
     },
   },
   {

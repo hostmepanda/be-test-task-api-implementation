@@ -1,29 +1,24 @@
 const Sequelize = require('sequelize');
 const { sequelize } = require('./helper');
 
-class Profile extends Sequelize.Model {
-}
+class Profile extends Sequelize.Model {}
 
 Profile.init(
   {
+    balance: Sequelize.DECIMAL(12, 2),
     firstName: {
-      type: Sequelize.STRING,
       allowNull: false,
+      type: Sequelize.STRING,
     },
     lastName: {
-      type: Sequelize.STRING,
       allowNull: false,
+      type: Sequelize.STRING,
     },
     profession: {
-      type: Sequelize.STRING,
       allowNull: false,
+      type: Sequelize.STRING,
     },
-    balance: {
-      type: Sequelize.DECIMAL(12, 2),
-    },
-    type: {
-      type: Sequelize.ENUM('client', 'contractor'),
-    },
+    type: Sequelize.ENUM('client', 'contractor'),
   },
   {
     sequelize,

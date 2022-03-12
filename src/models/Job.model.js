@@ -1,25 +1,22 @@
 const Sequelize = require('sequelize');
 const { sequelize } = require('./helper');
 
-class Job extends Sequelize.Model {
-}
+class Job extends Sequelize.Model {}
 
 Job.init(
   {
     description: {
+      allowNull: false,
       type: Sequelize.TEXT,
-      allowNull: false,
-    },
-    price: {
-      type: Sequelize.DECIMAL(12, 2),
-      allowNull: false,
     },
     paid: {
-      type: Sequelize.BOOLEAN,
       default: false,
+      type: Sequelize.BOOLEAN,
     },
-    paymentDate: {
-      type: Sequelize.DATE,
+    paymentDate: Sequelize.DATE,
+    price: {
+      allowNull: false,
+      type: Sequelize.DECIMAL(12, 2),
     },
   },
   {
