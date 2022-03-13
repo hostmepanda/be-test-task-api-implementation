@@ -9,10 +9,12 @@ const router = express.Router();
 
 router.use(getProfile);
 
+router.post('/balances/deposit/:userId', allowOnlyClients, balances.depositByUserId);
+
 router.get('/contracts/:id', contracts.getById);
 router.get('/contracts', contracts.list);
+
 router.post('/jobs/:job_id/pay', allowOnlyClients, jobs.payById);
-router.post('/balances/deposit/:userId', allowOnlyClients, balances.depositByUserId);
 router.get('/jobs/unpaid', jobs.listUnpaid);
 
 module.exports = {

@@ -2,6 +2,7 @@ const { Op: { or } } = require('sequelize');
 
 const { sequelize } = require('../../models');
 
+// TODO: find more common place for error reasons
 const ERROR_MESSAGE = {
   insufficientFunds: 'Insufficient funds',
 };
@@ -102,6 +103,10 @@ class JobsHandler {
       await Profile.update(
         { balance: clientUpdatedBalance },
         { where: { id: profileId } },
+      );
+      await Job.update(
+        { paid: true },
+        { where: { id: jobToPay.id } },
       );
       jobToPay.paid = true;
       return res.json(jobToPay);
