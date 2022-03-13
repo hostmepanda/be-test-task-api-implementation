@@ -1,6 +1,7 @@
 const { Contract } = require('./Contract.model');
 const { Job } = require('./Job.model');
 const { Profile } = require('./Profile.model');
+const { sequelize } = require('../database');
 
 Profile.hasMany(Contract, { as: 'Contractor', foreignKey: 'ContractorId' });
 Profile.hasMany(Contract, { as: 'Client', foreignKey: 'ClientId' });
@@ -15,4 +16,5 @@ module.exports = {
   Job,
   Contract,
   Profile,
+  sequelize,
 };
