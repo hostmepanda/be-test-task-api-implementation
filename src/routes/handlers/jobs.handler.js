@@ -12,7 +12,6 @@ class JobsHandler {
     this.models = sequelize.models;
     this.listUnpaid = this.listUnpaid.bind(this);
     this.payById = this.payById.bind(this);
-    this.isClientProfile = this.isClientProfile.bind(this);
   }
 
   async listUnpaid(req, res, next) {
