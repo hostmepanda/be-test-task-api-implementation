@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
-const { sequelize } = require('./helper');
+
+const { sequelize } = require('../database');
 
 class Job extends Sequelize.Model {}
 
