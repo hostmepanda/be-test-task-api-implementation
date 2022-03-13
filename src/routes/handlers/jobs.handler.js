@@ -3,7 +3,6 @@ const { Op: { or } } = require('sequelize');
 const { sequelize } = require('../../models');
 
 const ERROR_MESSAGE = {
-  profileIsNotAuthorized: 'You profile is not authorized to perform the request',
   insufficientFunds: 'Insufficient funds',
 };
 
@@ -60,15 +59,6 @@ class JobsHandler {
     const { job_id: jobId } = req.params;
     const { Contract, Job, Profile } = this.models;
 
-    if (!this.isClientProfile()) {
-      return res
-        .status(403)
-        .send({
-          success: false,
-          reason: ERROR_MESSAGE.profileIsNotAuthorized,
-        });
-    }
-
     try {
       const query = {
         include: {
@@ -120,10 +110,6 @@ class JobsHandler {
       // TODO: log error and reply with more suitable status code
       return next(error);
     }
-  }
-
-  isClientProfile() {
-    return this.profile?.type === 'client';
   }
 }
 

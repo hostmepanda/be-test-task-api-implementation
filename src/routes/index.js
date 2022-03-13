@@ -1,6 +1,7 @@
 const express = require('express');
 
-const { getProfile } = require('../middleware/getProfile');
+const { allowOnlyClients, getProfile } = require('../middlewares');
+const balances = require('./handlers/balances.handler');
 const contracts = require('./handlers/contracts.handler');
 const jobs = require('./handlers/jobs.handler');
 
@@ -10,7 +11,8 @@ router.use(getProfile);
 
 router.get('/contracts/:id', contracts.getById);
 router.get('/contracts', contracts.list);
-router.post('/jobs/:job_id/pay', jobs.payById);
+router.post('/jobs/:job_id/pay', allowOnlyClients, jobs.payById);
+router.post('/balances/deposit/:userId', allowOnlyClients, balances.depositByUserId);
 router.get('/jobs/unpaid', jobs.listUnpaid);
 
 module.exports = {
