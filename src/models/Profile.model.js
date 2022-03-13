@@ -4,6 +4,7 @@ const { sequelize } = require('../database');
 
 class Profile extends Sequelize.Model {}
 
+// TODO: add index fields
 Profile.init(
   {
     balance: Sequelize.DECIMAL(12, 2),

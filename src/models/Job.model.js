@@ -4,6 +4,7 @@ const { sequelize } = require('../database');
 
 class Job extends Sequelize.Model {}
 
+// TODO: add index fields
 Job.init(
   {
     description: {
