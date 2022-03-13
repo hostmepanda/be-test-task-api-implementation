@@ -10,6 +10,7 @@ router.use(getProfile);
 
 router.get('/contracts/:id', contracts.getById);
 router.get('/contracts', contracts.list);
+router.post('/jobs/:job_id/pay', jobs.payById);
 router.get('/jobs/unpaid', jobs.listUnpaid);
 
 module.exports = {
