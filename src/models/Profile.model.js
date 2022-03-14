@@ -25,6 +25,11 @@ Profile.init(
   {
     sequelize,
     modelName: 'Profile',
+    getterMethods: {
+      fullName() {
+        return [this.getDataValue('firstName'), this.getDataValue('lastName')].join(' ').trim();
+      },
+    },
   },
 );
 

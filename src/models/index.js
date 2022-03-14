@@ -4,7 +4,7 @@ const { Profile } = require('./Profile.model');
 const { sequelize } = require('../database');
 
 Profile.hasMany(Contract, { as: 'Contractor', foreignKey: 'ContractorId' });
-Profile.hasMany(Contract, { as: 'Client', foreignKey: 'ClientId' });
+Profile.hasMany(Contract, { as: '', foreignKey: 'ClientId' });
 
 Contract.belongsTo(Profile, { as: 'Contractor' });
 Contract.belongsTo(Profile, { as: 'Client' });

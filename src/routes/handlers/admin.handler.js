@@ -4,18 +4,21 @@ const { sequelize } = require('../../database');
 
 // TODO: find more common place for error reasons
 const ERROR_MESSAGE = {
+  limitShouldBeNumber: 'Limit param should be a number',
+  limitShouldBeGreaterZero: 'Limit param should be greater 0',
   startEndShouldBeDates: 'Start and end params should be valid dates',
-  startEndShouldBeString: 'Start and end params should be string',
+  startEndShouldBeString: 'Start and end params should be a string',
   startShouldBeGreaterEnd: 'Start date should be greater or equal end date',
 };
 class AdminHandler {
   constructor() {
     this.models = sequelize.models;
-    this.listBestProfessionByRange = this.listBestProfessionByRange.bind(this);
+    this.listBestClients = this.listBestClients.bind(this);
+    this.listBestProfession = this.listBestProfession.bind(this);
     this.validateQueryParams = this.validateQueryParams.bind(this);
   }
 
-  async listBestProfessionByRange(req, res, next) {
+  async listBestProfession(req, res, next) {
     this.queryParams = req.query;
     try {
       this.validateQueryParams(res);
@@ -43,6 +46,10 @@ class AdminHandler {
         include: {
           model: Contract,
           attributes: ['ContractorId'],
+          include: {
+            model: Profile,
+            as: 'Contractor',
+          },
         },
         order: [[sequelize.literal('sumByPeriod'), 'DESC']],
         where: {
@@ -66,12 +73,11 @@ class AdminHandler {
         const [mostPaidJobsByContractorId] = contractorJobsByRangePeriod;
         const {
           Contract: {
-            ContractorId: mostPaidContractorId,
+            Contractor: {
+              profession,
+            },
           },
         } = mostPaidJobsByContractorId.toJSON();
-        const {
-          profession,
-        } = await Profile.findOne({ where: { id: mostPaidContractorId, type: 'contractor' } });
         return res.send({ profession });
       }
       return res
@@ -82,10 +88,89 @@ class AdminHandler {
     }
   }
 
+  async listBestClients(req, res, next) {
+    this.queryParams = req.query;
+    try {
+      this.validateQueryParams(res);
+    } catch (error) {
+      return res
+        .status(400)
+        .send({
+          success: false,
+          reason: error.message,
+        });
+    }
+
+    const { end, limit = 2, start } = req.query;
+    const { Contract, Job, Profile } = this.models;
+    try {
+      const query = {
+        attributes: {
+          include: [
+            'Contract.ClientId',
+            [sequelize.fn('sum', sequelize.col('price')), 'paid'],
+          ],
+        },
+        group: 'Contract.ClientId',
+        include: {
+          model: Contract,
+          attributes: ['ClientId'],
+          include: {
+            model: Profile,
+            as: 'Client',
+          },
+        },
+        order: [[sequelize.literal('paid'), 'DESC']],
+        limit,
+        where: {
+          paid: true,
+          [and]: [
+            {
+              paymentDate: {
+                [gte]: new Date(start),
+              },
+            },
+            {
+              paymentDate: {
+                [lte]: new Date(end),
+              },
+            },
+          ],
+        },
+      };
+      const contractorJobsByRangePeriod = await Job.findAll(query);
+      if (contractorJobsByRangePeriod?.length > 0) {
+        const bestClients = contractorJobsByRangePeriod.map(
+          (bestClient) => {
+            const {
+              paid,
+              Contract: {
+                Client: {
+                  id,
+                  fullName,
+                },
+              },
+            } = bestClient.toJSON();
+            return { id, fullName, paid };
+          },
+        );
+        return res.json(bestClients);
+      }
+      return res
+        .status(404)
+        .end();
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   validateQueryParams() {
-    const { end, start } = this.queryParams;
+    const { end, start, limit = 2 } = this.queryParams;
     if (typeof end !== 'string' || typeof start !== 'string') {
       throw new Error(ERROR_MESSAGE.startEndShouldBeString);
+    }
+    if (Number.isNaN(limit)) {
+      throw new Error(ERROR_MESSAGE.limitShouldBeNumber);
     }
     const endDate = new Date(end);
     const startDate = new Date(start);
@@ -97,6 +182,10 @@ class AdminHandler {
     if (endDate < startDate) {
       throw new Error(ERROR_MESSAGE.startShouldBeGreaterEnd);
     }
+    if (limit <= 0) {
+      throw new Error(ERROR_MESSAGE.limitShouldBeGreaterZero);
+    }
+
     return undefined;
   }
 }

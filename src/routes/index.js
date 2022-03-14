@@ -10,7 +10,8 @@ const router = express.Router();
 
 router.use(getProfile);
 
-router.get('/admin/best-profession', admin.listBestProfessionByRange);
+router.get('/admin/best-profession', admin.listBestProfession);
+router.get('/admin/best-clients', admin.listBestClients);
 
 router.post('/balances/deposit/:userId', allowOnlyClients, balances.depositByUserId);
 
