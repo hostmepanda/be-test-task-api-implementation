@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Balances router handler methods depositByUserId Happy path Should call Job sum aggregation method 1`] = `
+Object {
+  "include": Object {
+    "attributes": Array [],
+    "model": [Function],
+    "where": Object {
+      "ClientId": 100,
+    },
+  },
+  "where": Object {
+    Symbol(or): Array [
+      Object {
+        "paid": false,
+      },
+      Object {
+        "paid": null,
+      },
+    ],
+  },
+}
+`;
+
+exports[`Balances router handler methods depositByUserId Happy path Should call Profile update once with correct params 1`] = `
+Array [
+  Object {
+    "balance": 1200,
+  },
+  Object {
+    "where": Object {
+      "id": 100,
+    },
+  },
+]
+`;
+
+exports[`Balances router handler methods depositByUserId With correct params Should call Job sum aggregation with correct query 1`] = `
+Object {
+  "include": Object {
+    "attributes": Array [],
+    "model": [Function],
+    "where": Object {
+      "ClientId": 100,
+    },
+  },
+  "where": Object {
+    Symbol(or): Array [
+      Object {
+        "paid": false,
+      },
+      Object {
+        "paid": null,
+      },
+    ],
+  },
+}
+`;
+
+exports[`Balances router handler methods depositByUserId With correct params Should call Profile update once with correct params 1`] = `
+Array [
+  Object {
+    "balance": 1200,
+  },
+  Object {
+    "where": Object {
+      "id": 100,
+    },
+  },
+]
+`;
