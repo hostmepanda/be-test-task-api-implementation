@@ -96,6 +96,7 @@ class JobsHandler {
       const contractorUpdatedBalance = contractorProfile.balance + jobToPay.price;
       const clientUpdatedBalance = this.profile.balance - jobToPay.price;
 
+      // TODO: Add payment date
       await Profile.update(
         { balance: contractorUpdatedBalance },
         { where: { id: jobToPay.Contract.ContractorId } },
