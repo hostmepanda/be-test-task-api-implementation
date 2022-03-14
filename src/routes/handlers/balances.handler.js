@@ -75,7 +75,10 @@ class BalancesHandler {
           { balance: updatedBalance },
           { where: { id: profileId } },
         );
-        return res.status(200).send({ success: true, balance: updatedBalance });
+        return res.status(200).send({
+          success: true,
+          balance: updatedBalance,
+        });
       } catch (error) {
         return res
           .status(400)
@@ -85,6 +88,7 @@ class BalancesHandler {
           });
       }
     } catch (error) {
+      // TODO: log error
       return next(error);
     }
   }
