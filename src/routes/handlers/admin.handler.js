@@ -49,12 +49,12 @@ class AdminHandler {
           paid: true,
           [and]: [
             {
-              createdAt: {
+              paymentDate: {
                 [gte]: new Date(start),
               },
             },
             {
-              createdAt: {
+              paymentDate: {
                 [lte]: new Date(end),
               },
             },
