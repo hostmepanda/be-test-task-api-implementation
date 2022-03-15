@@ -1,16 +1,21 @@
 const getProfile = async (req, res, next) => {
   const { Profile } = req.app.get('models');
+  let profile;
 
-  const profile = await Profile.findOne(
-    { where: { id: req.get('profile_id') || 0 } },
-  );
+  try {
+    const options = { where: { id: req.get('profile_id') || 0 } };
+    profile = await Profile.findOne(options);
 
-  if (!profile) {
-    return res.status(401).end();
+    if (!profile) {
+      return res.status(401).end();
+    }
+
+    req.profile = profile;
+    return next();
+  } catch (error) {
+    // TODO: log error
+    return next(error);
   }
-
-  req.profile = profile;
-  return next();
 };
 
 module.exports = { getProfile };
