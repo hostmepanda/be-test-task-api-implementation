@@ -18,6 +18,8 @@ const spyOnProfile = {
   findOne: jest.spyOn(jobsHandler.models.Profile, 'findOne'),
   update: jest.spyOn(jobsHandler.models.Profile, 'update'),
 };
+const spyOnAcquireLocks = jest.spyOn(jobsHandler, 'acquireLocks');
+const spyOnReleaseLocks = jest.spyOn(jobsHandler, 'releaseLocks');
 
 const activeContractId = 100;
 const clientIdBelongsContract = 200;
@@ -186,6 +188,9 @@ describe('Jobs router handler methods', () => {
         spyOnProfile.update.mockResolvedValue(undefined);
 
         mockedJson.mockImplementationOnce((json) => json);
+
+        spyOnAcquireLocks.mockResolvedValue(undefined);
+        spyOnReleaseLocks.mockResolvedValue(undefined);
       });
       beforeAll(async () => {
         payByIdResult = await jobsHandler.payById(
@@ -202,6 +207,9 @@ describe('Jobs router handler methods', () => {
         jest.clearAllMocks();
       });
 
+      it('Should call once acquireLocks', () => {
+        expect(spyOnAcquireLocks).toBeCalledTimes(1);
+      });
       it('Should call once Job findOne once with correct query', () => {
         expect(spyOnJob.findOne).toBeCalledTimes(1);
         expect(spyOnJob.findOne.mock.calls[0]).toMatchSnapshot();
@@ -223,6 +231,9 @@ describe('Jobs router handler methods', () => {
       });
       it('Should not call next middleware', () => {
         expect(next).not.toBeCalled();
+      });
+      it('Should call once releaseLocks', () => {
+        expect(spyOnReleaseLocks).toBeCalledTimes(1);
       });
       it('Should return updated job', () => {
         expect(payByIdResult).toMatchObject({

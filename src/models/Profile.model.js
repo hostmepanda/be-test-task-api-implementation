@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-const { sequelize } = require('../database');
+const { sequelize } = require('../databases');
 
 class Profile extends Sequelize.Model {}
 
