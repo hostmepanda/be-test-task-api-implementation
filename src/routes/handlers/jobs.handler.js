@@ -62,7 +62,7 @@ class JobsHandler {
 
     if (!jobId) {
       return res
-        .status(404)
+        .status(400)
         .send({
           success: false,
           reason: ERROR_MESSAGE.jobIdMustBeProvided,
@@ -106,7 +106,7 @@ class JobsHandler {
       const contractorUpdatedBalance = contractorProfile.balance + jobToPay.price;
       const clientUpdatedBalance = this.profile.balance - jobToPay.price;
 
-      // TODO: Switch to transaction
+      // TODO: Switch to transaction or put locks with redis
       // TODO: Add payment date or payedAt
       await Profile.update(
         { balance: contractorUpdatedBalance },

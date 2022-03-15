@@ -172,8 +172,9 @@ describe('Jobs router handler methods', () => {
     });
   });
   describe('payById', () => {
+    let payByIdResult;
+
     describe('Happy path', () => {
-      let payByIdResult;
       beforeAll(async () => {
         spyOnJob.findOne.mockResolvedValue({
           ...jobOne,
@@ -227,6 +228,192 @@ describe('Jobs router handler methods', () => {
         expect(payByIdResult).toMatchObject({
           ...jobOne,
           paid: true,
+        });
+      });
+    });
+    describe('With wrong params', () => {
+      describe('job_id is not provided', () => {
+        beforeAll(async () => {
+          mockedStatus.mockImplementationOnce(() => ({
+            send: (data) => data,
+          }));
+          mockedJson.mockImplementationOnce((json) => json);
+        });
+        beforeAll(async () => {
+          payByIdResult = await jobsHandler.payById(
+            {
+              ...req,
+              params: { job_id: undefined },
+              profile: { ...req.profile, balance: 100 },
+            },
+            res,
+            next,
+          );
+        });
+        afterAll(() => {
+          jest.clearAllMocks();
+        });
+        it('Should not call Job findOne', () => {
+          expect(spyOnJob.findOne).not.toBeCalled();
+        });
+        it('Should not call Profile findOne', () => {
+          expect(spyOnProfile.findOne).not.toBeCalled();
+        });
+        it('Should not call Profile update', () => {
+          expect(spyOnProfile.update).not.toBeCalled();
+        });
+        it('Should not call json method', () => {
+          expect(mockedJson).not.toBeCalled();
+        });
+        it('Should call once status with 400', () => {
+          expect(mockedStatus).toBeCalledTimes(1);
+          expect(mockedStatus).toBeCalledWith(400);
+        });
+        it('Should not call next middleware', () => {
+          expect(next).not.toBeCalled();
+        });
+        it('Should return unsuccessful result', () => {
+          expect(payByIdResult).toMatchObject({
+            success: false,
+            reason: 'job_id must be provided',
+          });
+        });
+      });
+      describe('provided job_id is not found', () => {
+        beforeAll(async () => {
+          spyOnJob.findOne.mockResolvedValue(null);
+          mockedStatus.mockImplementationOnce(() => ({
+            end: (data) => data,
+          }));
+          mockedJson.mockImplementationOnce((json) => json);
+        });
+        beforeAll(async () => {
+          payByIdResult = await jobsHandler.payById(
+            {
+              ...req,
+              params: { job_id: jobOne.id },
+              profile: { ...req.profile, balance: 100 },
+            },
+            res,
+            next,
+          );
+        });
+        afterAll(() => {
+          jest.clearAllMocks();
+        });
+        it('Should call Job findOne', () => {
+          expect(spyOnJob.findOne).toBeCalledTimes(1);
+        });
+        it('Should not call Profile findOne', () => {
+          expect(spyOnProfile.findOne).not.toBeCalled();
+        });
+        it('Should not call Profile update', () => {
+          expect(spyOnProfile.update).not.toBeCalled();
+        });
+        it('Should not call json method', () => {
+          expect(mockedJson).not.toBeCalled();
+        });
+        it('Should call once status with 404', () => {
+          expect(mockedStatus).toBeCalledTimes(1);
+          expect(mockedStatus).toBeCalledWith(404);
+        });
+        it('Should not call next middleware', () => {
+          expect(next).not.toBeCalled();
+        });
+        it('Should return unsuccessful result', () => {
+          expect(payByIdResult).toBeUndefined();
+        });
+      });
+      describe('balance of a client is less than the job price', () => {
+        beforeAll(async () => {
+          spyOnJob.findOne.mockResolvedValue(jobOne);
+          mockedStatus.mockImplementationOnce(() => ({
+            send: (data) => data,
+          }));
+          mockedJson.mockImplementationOnce((json) => json);
+        });
+        beforeAll(async () => {
+          payByIdResult = await jobsHandler.payById(
+            {
+              ...req,
+              params: { job_id: jobOne.id },
+              profile: { ...req.profile, balance: 0 },
+            },
+            res,
+            next,
+          );
+        });
+        afterAll(() => {
+          jest.clearAllMocks();
+        });
+        it('Should call Job findOne', () => {
+          expect(spyOnJob.findOne).toBeCalledTimes(1);
+        });
+        it('Should not call Profile findOne', () => {
+          expect(spyOnProfile.findOne).not.toBeCalled();
+        });
+        it('Should not call Profile update', () => {
+          expect(spyOnProfile.update).not.toBeCalled();
+        });
+        it('Should not call json method', () => {
+          expect(mockedJson).not.toBeCalled();
+        });
+        it('Should call once status with 400', () => {
+          expect(mockedStatus).toBeCalledTimes(1);
+          expect(mockedStatus).toBeCalledWith(400);
+        });
+        it('Should not call next middleware', () => {
+          expect(next).not.toBeCalled();
+        });
+        it('Should return unsuccessful result', () => {
+          expect(payByIdResult).toMatchObject({
+            success: false,
+            reason: 'Insufficient funds',
+          });
+        });
+      });
+      describe('Profile findOne throws an error', () => {
+        beforeAll(async () => {
+          spyOnJob.findOne.mockResolvedValue({
+            ...jobOne,
+            Contract: { ContractorId: contractorIdBelongsContract },
+          });
+          spyOnProfile.findOne.mockRejectedValue(new Error('Some db error'));
+        });
+        beforeAll(async () => {
+          payByIdResult = await jobsHandler.payById(
+            {
+              ...req,
+              params: { job_id: jobOne.id },
+              profile: { ...req.profile, balance: jobOne.price * 2 },
+            },
+            res,
+            next,
+          );
+        });
+        afterAll(() => {
+          jest.clearAllMocks();
+        });
+        it('Should call Job findOne', () => {
+          expect(spyOnJob.findOne).toBeCalledTimes(1);
+        });
+        it('Should call once Profile findOne', () => {
+          expect(spyOnProfile.findOne).toBeCalledTimes(1);
+        });
+        it('Should not call Profile update', () => {
+          expect(spyOnProfile.update).not.toBeCalled();
+        });
+        it('Should not call json method', () => {
+          expect(mockedJson).not.toBeCalled();
+        });
+        it('Should not call status', () => {
+          expect(mockedStatus).not.toBeCalled();
+        });
+        it('Should call once next middleware', () => {
+          expect(next).toBeCalledTimes(1);
+        });
+        it('Should return unsuccessful result', () => {
+          expect(payByIdResult).toBeUndefined();
         });
       });
     });
