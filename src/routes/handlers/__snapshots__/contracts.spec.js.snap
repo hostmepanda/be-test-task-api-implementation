@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Contracts router handler methods getById when contract with given id exists and it belongs to the profile calling Should call once Contract findAll with correct query 1`] = `
+Array [
+  Object {
+    "where": Object {
+      "id": 1,
+      Symbol(or): Array [
+        Object {
+          "ClientId": 100,
+        },
+        Object {
+          "ContractorId": 100,
+        },
+      ],
+    },
+  },
+]
+`;
+
+exports[`Contracts router handler methods list having 2 contracts belong to the profile calling Should call once Contract findAll with correct query 1`] = `
+Array [
+  Object {
+    "where": Object {
+      "status": Array [
+        "new",
+        "in_progress",
+      ],
+      Symbol(or): Array [
+        Object {
+          "ClientId": 100,
+        },
+        Object {
+          "ContractorId": 100,
+        },
+      ],
+    },
+  },
+]
+`;

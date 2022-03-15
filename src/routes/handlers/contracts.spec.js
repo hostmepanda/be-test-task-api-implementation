@@ -51,13 +51,13 @@ describe('Contracts router handler methods', () => {
             profile: clientExistingProfile,
           };
           // TODO: replace with real db interaction, e.g. in memory?
-          mockedJson.mockResolvedValue(existingContract);
           spyOnContractFindOne.mockResolvedValue(existingContract);
+          mockedJson.mockImplementationOnce((data) => data);
           getByIdResult = await contractsHandler.getById(req, res, next);
         });
-        it('Should call json method', () => {
-          expect(mockedJson).toBeCalledTimes(1);
-          expect(mockedJson).toBeCalledWith(existingContract);
+        it('Should call once Contract findAll with correct query', () => {
+          expect(spyOnContractFindOne).toBeCalledTimes(1);
+          expect(spyOnContractFindOne.mock.calls[0]).toMatchSnapshot();
         });
         it('Should not call next', () => {
           expect(next).not.toBeCalled();
@@ -168,6 +168,9 @@ describe('Contracts router handler methods', () => {
         jest.clearAllMocks();
       });
 
+      it('Should call once Contract findAll with correct query', () => {
+        expect(spyOnContractFindAll.mock.calls[0]).toMatchSnapshot();
+      });
       it('Should not call json method', () => {
         expect(mockedJson).toBeCalledTimes(1);
       });
