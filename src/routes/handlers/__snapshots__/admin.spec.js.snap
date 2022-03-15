@@ -1,0 +1,116 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Admin router handler methods listBestClients With correct params Should call Job findAll with correct query 1`] = `
+Array [
+  Object {
+    "attributes": Object {
+      "include": Array [
+        "Contract.ClientId",
+        Array [
+          Fn {
+            "args": Array [
+              Col {
+                "col": "price",
+              },
+            ],
+            "fn": "sum",
+          },
+          "paid",
+        ],
+      ],
+    },
+    "group": "Contract.ClientId",
+    "include": Object {
+      "attributes": Array [
+        "ClientId",
+      ],
+      "include": Object {
+        "as": "Client",
+        "model": [Function],
+      },
+      "model": [Function],
+    },
+    "limit": 2,
+    "order": Array [
+      Array [
+        Literal {
+          "val": "paid",
+        },
+        "DESC",
+      ],
+    ],
+    "where": Object {
+      "paid": true,
+      Symbol(and): Array [
+        Object {
+          "paymentDate": Object {
+            Symbol(gte): 2020-01-25T00:00:00.000Z,
+          },
+        },
+        Object {
+          "paymentDate": Object {
+            Symbol(lte): 2020-10-15T00:00:00.000Z,
+          },
+        },
+      ],
+    },
+  },
+]
+`;
+
+exports[`Admin router handler methods listBestProfession With correct params Should call Job findAll with correct query 1`] = `
+Array [
+  Object {
+    "attributes": Object {
+      "include": Array [
+        "Contract.ContractorId",
+        Array [
+          Fn {
+            "args": Array [
+              Col {
+                "col": "price",
+              },
+            ],
+            "fn": "sum",
+          },
+          "sumByPeriod",
+        ],
+      ],
+    },
+    "group": "Contract.ContractorId",
+    "include": Object {
+      "attributes": Array [
+        "ContractorId",
+      ],
+      "include": Object {
+        "as": "Contractor",
+        "model": [Function],
+      },
+      "model": [Function],
+    },
+    "order": Array [
+      Array [
+        Literal {
+          "val": "sumByPeriod",
+        },
+        "DESC",
+      ],
+    ],
+    "where": Object {
+      "paid": true,
+      Symbol(and): Array [
+        Object {
+          "paymentDate": Object {
+            Symbol(gte): 2020-01-25T00:00:00.000Z,
+          },
+        },
+        Object {
+          "paymentDate": Object {
+            Symbol(lte): 2020-10-15T00:00:00.000Z,
+          },
+        },
+      ],
+    },
+  },
+]
+`;

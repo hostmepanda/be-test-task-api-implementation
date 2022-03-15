@@ -1,6 +1,6 @@
 const { Op: { and, gte, lte } } = require('sequelize');
 
-const { sequelize } = require('../../database');
+const { sequelize } = require('../../models');
 
 // TODO: find more common place for error reasons
 const ERROR_MESSAGE = {
@@ -8,7 +8,7 @@ const ERROR_MESSAGE = {
   limitShouldBeGreaterZero: 'Limit param should be greater 0',
   startEndShouldBeDates: 'Start and end params should be valid dates',
   startEndShouldBeString: 'Start and end params should be a string',
-  startShouldBeGreaterEnd: 'Start date should be greater or equal end date',
+  startShouldBeGreaterEnd: 'Start date should be greater end date',
 };
 class AdminHandler {
   constructor() {
@@ -21,7 +21,7 @@ class AdminHandler {
   async listBestProfession(req, res, next) {
     this.queryParams = req.query;
     try {
-      this.validateQueryParams(res);
+      this.validateQueryParams();
     } catch (error) {
       return res
         .status(400)
@@ -84,6 +84,7 @@ class AdminHandler {
         .status(404)
         .end();
     } catch (error) {
+      // TODO: log error
       return next(error);
     }
   }
@@ -169,7 +170,7 @@ class AdminHandler {
     if (typeof end !== 'string' || typeof start !== 'string') {
       throw new Error(ERROR_MESSAGE.startEndShouldBeString);
     }
-    if (Number.isNaN(limit)) {
+    if (Number.isNaN(parseInt(limit, 10))) {
       throw new Error(ERROR_MESSAGE.limitShouldBeNumber);
     }
     const endDate = new Date(end);
@@ -179,7 +180,7 @@ class AdminHandler {
     if (isInvalidEndDate || isInvalidStartDate) {
       throw new Error(ERROR_MESSAGE.startEndShouldBeDates);
     }
-    if (endDate < startDate) {
+    if (endDate <= startDate) {
       throw new Error(ERROR_MESSAGE.startShouldBeGreaterEnd);
     }
     if (limit <= 0) {
