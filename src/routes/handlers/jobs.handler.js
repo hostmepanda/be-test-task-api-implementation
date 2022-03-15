@@ -5,6 +5,7 @@ const { sequelize } = require('../../models');
 // TODO: find more common place for error reasons
 const ERROR_MESSAGE = {
   insufficientFunds: 'Insufficient funds',
+  jobIdMustBeProvided: 'job_id must be provided',
 };
 
 class JobsHandler {
@@ -56,8 +57,17 @@ class JobsHandler {
     this.profile = req.profile;
 
     const { id: profileId } = req.profile;
-    const { job_id: jobId } = req.params;
+    const { job_id: jobId = 0 } = req.params || {};
     const { Contract, Job, Profile } = this.models;
+
+    if (!jobId) {
+      return res
+        .status(404)
+        .send({
+          success: false,
+          reason: ERROR_MESSAGE.jobIdMustBeProvided,
+        });
+    }
 
     try {
       const query = {
@@ -96,7 +106,8 @@ class JobsHandler {
       const contractorUpdatedBalance = contractorProfile.balance + jobToPay.price;
       const clientUpdatedBalance = this.profile.balance - jobToPay.price;
 
-      // TODO: Add payment date
+      // TODO: Switch to transaction
+      // TODO: Add payment date or payedAt
       await Profile.update(
         { balance: contractorUpdatedBalance },
         { where: { id: jobToPay.Contract.ContractorId } },

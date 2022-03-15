@@ -1,0 +1,167 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Jobs router handler methods listUnpaid Job findAll throws error Should call once Job findAll with correct query 1`] = `
+Array [
+  Object {
+    "include": Object {
+      "attributes": Array [
+        "ContractorId",
+      ],
+      "model": [Function],
+      "where": Object {
+        "status": "in_progress",
+        Symbol(or): Array [
+          Object {
+            "ClientId": 300,
+          },
+          Object {
+            "ContractorId": 300,
+          },
+        ],
+      },
+    },
+    "where": Object {
+      Symbol(or): Array [
+        Object {
+          "paid": false,
+        },
+        Object {
+          "paid": null,
+        },
+      ],
+    },
+  },
+]
+`;
+
+exports[`Jobs router handler methods listUnpaid There are no unpaid jobs Should call once Job findAll with correct query 1`] = `
+Array [
+  Object {
+    "include": Object {
+      "attributes": Array [
+        "ContractorId",
+      ],
+      "model": [Function],
+      "where": Object {
+        "status": "in_progress",
+        Symbol(or): Array [
+          Object {
+            "ClientId": 300,
+          },
+          Object {
+            "ContractorId": 300,
+          },
+        ],
+      },
+    },
+    "where": Object {
+      Symbol(or): Array [
+        Object {
+          "paid": false,
+        },
+        Object {
+          "paid": null,
+        },
+      ],
+    },
+  },
+]
+`;
+
+exports[`Jobs router handler methods listUnpaid There are two unpaid jobs belong to one active contract Should call once Job findAll with correct query 1`] = `
+Array [
+  Object {
+    "include": Object {
+      "attributes": Array [
+        "ContractorId",
+      ],
+      "model": [Function],
+      "where": Object {
+        "status": "in_progress",
+        Symbol(or): Array [
+          Object {
+            "ClientId": 300,
+          },
+          Object {
+            "ContractorId": 300,
+          },
+        ],
+      },
+    },
+    "where": Object {
+      Symbol(or): Array [
+        Object {
+          "paid": false,
+        },
+        Object {
+          "paid": null,
+        },
+      ],
+    },
+  },
+]
+`;
+
+exports[`Jobs router handler methods payById Happy path Should call once Job findOne once with correct query 1`] = `
+Array [
+  Object {
+    "include": Object {
+      "attributes": Array [
+        "ContractorId",
+      ],
+      "model": [Function],
+      "where": Object {
+        "ClientId": 300,
+      },
+    },
+    "where": Object {
+      "id": 1,
+      Symbol(or): Array [
+        Object {
+          "paid": false,
+        },
+        Object {
+          "paid": null,
+        },
+      ],
+    },
+  },
+]
+`;
+
+exports[`Jobs router handler methods payById Happy path Should call once Profile findOne once with correct query 1`] = `
+Array [
+  Object {
+    "where": Object {
+      "id": 300,
+      "type": "contractor",
+    },
+  },
+]
+`;
+
+exports[`Jobs router handler methods payById Happy path Should call twice Profile update once with correct query 1`] = `
+Array [
+  Object {
+    "balance": 100,
+  },
+  Object {
+    "where": Object {
+      "id": 300,
+    },
+  },
+]
+`;
+
+exports[`Jobs router handler methods payById Happy path Should call twice Profile update once with correct query 2`] = `
+Array [
+  Object {
+    "balance": 0,
+  },
+  Object {
+    "where": Object {
+      "id": 300,
+    },
+  },
+]
+`;
