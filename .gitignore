@@ -3,3 +3,4 @@
 database.sqlite3
 node_modules
 test-db.sqlite3
+/coverage/
