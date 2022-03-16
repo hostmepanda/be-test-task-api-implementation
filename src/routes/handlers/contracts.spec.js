@@ -1,3 +1,23 @@
+jest.mock('ioredis', () => {
+  class MockedRedis {
+    constructor() {
+      this.on = this.on.bind(this);
+      this.quit = this.quit.bind(this);
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    on() {
+      return jest.fn();
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    quit() {
+      return jest.fn();
+    }
+  }
+  return MockedRedis;
+});
+
 const contractsHandler = require('./contracts.handler');
 
 const mockedStatus = jest.fn();
