@@ -1,14 +1,8 @@
 const { Op: { or } } = require('sequelize');
 
 const { sequelize } = require('../../models');
+const { ERROR_MESSAGE } = require('./helpers');
 
-// TODO: find more common place for error reasons
-const ERROR_MESSAGE = {
-  depositMustBeNumber: 'Deposit must be a number',
-  depositMustBePositive: 'Deposit must be positive',
-  internalError: 'Internal error',
-  maxAllowedDeposit: 'Max allowed deposit is',
-};
 class BalancesHandler {
   constructor() {
     this.models = sequelize.models;

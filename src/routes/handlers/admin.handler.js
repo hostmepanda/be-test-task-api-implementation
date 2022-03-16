@@ -1,15 +1,8 @@
 const { Op: { and, gte, lte } } = require('sequelize');
 
 const { sequelize } = require('../../models');
+const { ERROR_MESSAGE } = require('./helpers');
 
-// TODO: find more common place for error reasons
-const ERROR_MESSAGE = {
-  limitShouldBeNumber: 'Limit param should be a number',
-  limitShouldBeGreaterZero: 'Limit param should be greater 0',
-  startEndShouldBeDates: 'Start and end params should be valid dates',
-  startEndShouldBeString: 'Start and end params should be a string',
-  startShouldBeGreaterEnd: 'Start date should be greater end date',
-};
 class AdminHandler {
   constructor() {
     this.models = sequelize.models;

@@ -3,11 +3,7 @@ const { Op: { or } } = require('sequelize');
 const { sequelize } = require('../../models');
 const { redlock } = require('../../databases');
 
-// TODO: find more common place for error reasons
-const ERROR_MESSAGE = {
-  insufficientFunds: 'Insufficient funds',
-  jobIdMustBeProvided: 'job_id must be provided',
-};
+const { ERROR_MESSAGE } = require('./helpers');
 
 class JobsHandler {
   constructor() {
