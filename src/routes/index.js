@@ -8,18 +8,16 @@ const jobs = require('./handlers/jobs.handler');
 
 const router = express.Router();
 
-router.use(getProfile);
+router.get('/admin/best-profession', getProfile, admin.listBestProfession);
+router.get('/admin/best-clients', getProfile, admin.listBestClients);
 
-router.get('/admin/best-profession', admin.listBestProfession);
-router.get('/admin/best-clients', admin.listBestClients);
+router.post('/balances/deposit/:userId', getProfile, allowOnlyClients, balances.depositByUserId);
 
-router.post('/balances/deposit/:userId', allowOnlyClients, balances.depositByUserId);
+router.get('/contracts/:id', getProfile, contracts.getById);
+router.get('/contracts', getProfile, contracts.list);
 
-router.get('/contracts/:id', contracts.getById);
-router.get('/contracts', contracts.list);
-
-router.post('/jobs/:job_id/pay', allowOnlyClients, jobs.payById);
-router.get('/jobs/unpaid', jobs.listUnpaid);
+router.post('/jobs/:job_id/pay', getProfile, allowOnlyClients, jobs.payById);
+router.get('/jobs/unpaid', getProfile, jobs.listUnpaid);
 
 module.exports = {
   router,

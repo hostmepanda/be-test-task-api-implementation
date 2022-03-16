@@ -9,7 +9,8 @@
     "redlock": "^5.0.0-beta.2",
     "sequelize": "^6.3.4",
     "sqlite3": "^4.0.1",
-    "swagger-autogen": "^2.19.0"
+    "swagger-autogen": "^2.19.0",
+    "swagger-ui-express": "^4.3.0"
   },
   "scripts": {
     "start": "node ./src/server.js",
