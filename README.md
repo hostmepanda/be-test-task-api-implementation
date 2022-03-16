@@ -15,6 +15,7 @@ Critical issues for several packages (e.g. `nodmon`) were applied. Based on data
 - `GET /admin/best-clients?start=<date>&end=<date>&limit=<integer>` returns the clients the paid the most for jobs in the query time period.
 
 ## Technical details
+- Application runs using [`nodejs`](https://github.com/nodejs/node);
 - In the core of the application [`expressjs`](https://expressjs.com/) framework.
 - As a database layer the Sequelize ORM tool is used, actual store is [`sqlite`](https://www.sqlite.org/index.html) though.
 - [`ioredis`](https://github.com/luin/ioredis) and [`redlock`](https://github.com/mike-marcacci/node-redlock) are used to manage locks within models update operations.
