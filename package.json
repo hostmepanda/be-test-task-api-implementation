@@ -1,6 +1,6 @@
 {
   "name": "deel-task",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": true,
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -8,12 +8,14 @@
     "ioredis": "^4.28.5",
     "redlock": "^5.0.0-beta.2",
     "sequelize": "^6.3.4",
-    "sqlite3": "^4.0.1"
+    "sqlite3": "^4.0.1",
+    "swagger-autogen": "^2.19.0"
   },
   "scripts": {
     "start": "node ./src/server.js",
     "dev": "nodemon ./src/server.js",
     "seed": "node ./scripts/seedDb.js",
+    "swagger-autogen": "node ./swagger.js",
     "test": "jest"
   },
   "devDependencies": {
