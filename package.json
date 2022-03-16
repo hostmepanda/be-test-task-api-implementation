@@ -1,6 +1,6 @@
 {
   "name": "deel-task",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "private": true,
   "dependencies": {
     "body-parser": "^1.19.0",
